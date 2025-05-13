@@ -38,6 +38,13 @@ The relational database was designed in Third Normal Form (3NF) to eliminate red
 - **Referrals and Affiliates**: Captures referral source types—affiliate, website, and word-of-mouth—and ties them to actual bookings.
 - **Feedback and Loyalty**: Integrates satisfaction ratings and reward tracking for personalized guest management.
 
+  ![er_diagram](https://github.com/user-attachments/assets/42e07810-82f0-41d8-b272-52e334653bce)
+  
+![relational_schema](https://github.com/user-attachments/assets/53530b6d-8d37-4011-9d51-29a0717094b6)
+
+  
+
+
 ### 2. Analytical Layer (Snowflake Data Warehouse)
 
 The data warehouse supports performance monitoring and department-level reporting. It was built using a snowflake schema, with normalized dimension tables to support hierarchical queries and reduce duplication.
@@ -53,6 +60,9 @@ Derived metrics computed through ELT include:
 - Average service rating (by service and by category)
 - Booking volume per service type
 - Department-level satisfaction scores
+
+![data_warehouse_schema](https://github.com/user-attachments/assets/a6e884e4-cf66-4e1e-9513-d96192d34e84)
+
 
 ## Key Business Insights
 
