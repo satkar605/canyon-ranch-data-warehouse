@@ -217,66 +217,75 @@ This document outlines the SQL Server schema design decisions for the Canyon Ran
 | ReservationServiceID | INT       | PRIMARY KEY (composite part)  | References the reservation service  |
 | ServiceID            | INT       | PRIMARY KEY (composite part)  | References the service              |
 
-Appendix B : Data Warehouse Dictionary
+## Data Warehouse Dictionary
 This document provides a comprehensive reference for all tables and columns in the Canyon Ranch data warehouse, including data types, descriptions, and relationships between tables.
-1.	Fact_ReservationService
-Central fact table that records each instance of a service booking, representing one service booked by a customer on a specific date and time.
-Column Name	Data Type	Constraints	Description	Source/Derived
-ReservationServiceKey	INT	PRIMARY KEY, IDENTITY	Surrogate identifier for each service booking	Generated
-DateKey	INT	FOREIGN KEY	Reference to Dim_Date dimension	Join to Dim_Date
-CustomerKey	INT	FOREIGN KEY	Reference to Dim_Customer dimension	Join to Dim_Customer
-ServiceKey	INT	FOREIGN KEY	Reference to Dim_Service dimension	Join to Dim_Service
-ServiceDate	DATE	NOT NULL	Calendar date of the service	Source from ReservationService
-TimeSlot	TIME(7)	NOT NULL	Scheduled time of the service	Source from ReservationService
-Revenue	DECIMAL(10,2)	NOT NULL	Amount paid for the service	Source from Service.Price
-ServiceCount	INT	NOT NULL, DEFAULT 1	Count of services (always 1 for atomic grain)	Derived (constant)
-ServiceDurationMinutes	INT	NOT NULL	Duration of service in minutes	Source from Service.Duration
-ServiceRevenueAmount	DECIMAL(10,2)	NOT NULL	Amount paid (duplicates Revenue for analysis)	Source from Service.Price
 
-2.	Dim_Date
-Date dimension table storing calendar attributes to support time-based analysis across various periods.
-Column Name	Data Type	Constraints	Description	Source/Derived
-DateKey	INT	PRIMARY KEY	Date in YYYYMMDD format	Derived from FullDate
-FullDate	DATE	NOT NULL, UNIQUE	Actual calendar date	Source
-DayOfWeek	INT	NOT NULL	Day number (1=Sunday, 7=Saturday)	Derived from FullDate
-DayName	NVARCHAR(10)	NOT NULL	Name of day	Derived from FullDate
-Month	INT	NOT NULL	Month number (1-12)	Derived from FullDate
-MonthName	NVARCHAR(10)	NOT NULL	Name of month	Derived from FullDate
-Quarter	INT	NOT NULL	Calendar quarter (1-4)	Derived from FullDate
-Year	INT	NOT NULL	Calendar year	Derived from FullDate
+# Define the individual markdown tables for each data warehouse entity
+dw_tables_markdown = """
+**Fact_ReservationService**  
+_Stores each instance of a booked service, supporting revenue and performance tracking._
 
-3.	Dim_Customer
-Customer dimension containing demographic and loyalty attributes about Canyon Ranch clients.
-Column Name	Data Type	Constraints	Description	Source/Derived
-CustomerKey	INT	PRIMARY KEY, IDENTITY	Surrogate identifier for customer	Generated
-CustomerID	INT	NOT NULL, UNIQUE	Business key from source system	Source from Customer
-CustomerName	NVARCHAR(100)	NOT NULL	Full name of customer	Derived (CustFName + CustLName)
-Gender	NVARCHAR(20)	NULL	Customer's gender	Source from Customer
-AgeGroup	NVARCHAR(20)	NOT NULL	Age category for demographic analysis	Derived from DateOfBirth
-LoyaltyLevel	NVARCHAR(20)	NOT NULL	Loyalty program membership level	Source from LoyaltyProgram
+| Column Name              | Data Type      | Constraints                | Description                                     | Source/Derived         |
+|--------------------------|----------------|----------------------------|-------------------------------------------------|------------------------|
+| ReservationServiceKey    | INT            | PRIMARY KEY, IDENTITY      | Surrogate identifier for each service booking   | Generated              |
+| DateKey                  | INT            | FOREIGN KEY                | Reference to Dim_Date dimension                 | Join to Dim_Date       |
+| CustomerKey              | INT            | FOREIGN KEY                | Reference to Dim_Customer dimension             | Join to Dim_Customer   |
+| ServiceKey               | INT            | FOREIGN KEY                | Reference to Dim_Service dimension              | Join to Dim_Service    |
+| ServiceDate              | DATE           | NOT NULL                   | Calendar date of the service                    | ReservationService     |
+| TimeSlot                 | TIME(7)        | NOT NULL                   | Scheduled time of the service                   | ReservationService     |
+| Revenue                  | DECIMAL(10,2)  | NOT NULL                   | Amount paid for the service                     | Service.Price          |
+| ServiceCount             | INT            | NOT NULL, DEFAULT 1        | Count of services (always 1 for atomic grain)   | Derived (constant)     |
+| ServiceDurationMinutes   | INT            | NOT NULL                   | Duration of service in minutes                  | Service.Duration       |
+| ServiceRevenueAmount     | DECIMAL(10,2)  | NOT NULL                   | Duplicate of revenue for analysis flexibility   | Service.Price          |
 
-4.	Dim_Service
-Service dimension containing attributes about wellness and health services offered by Canyon Ranch.
-Column Name	Data Type	Constraints	Description	Source/Derived
-ServiceKey	INT	PRIMARY KEY, IDENTITY	Surrogate identifier for service	Generated
-ServiceID	INT	NOT NULL, UNIQUE	Business key from source system	Source from Service
-ServiceName	NVARCHAR(100)	NOT NULL	Name of service	Source from Service
-ServiceTypeKey	INT	FOREIGN KEY	Reference to Dim_ServiceType dimension	Join to Dim_ServiceType
-Duration	INT	NOT NULL	Length of service in minutes	Source from Service
-Price	DECIMAL(10,2)	NOT NULL	Standard price of service	Source from Service
-AvgRating	DECIMAL(3,2)	NULL	Average customer rating	Derived from Feedback
+**Dim_Date**  
+_Provides temporal attributes for filtering and time-series analysis._
 
-5.	Dim_ServiceType
-Parent dimension to Dim_Service in a snowflake schema, categorizing services into logical types.
-Column Name	Data Type	Constraints	Description	Source/Derived
-ServiceTypeKey	INT	PRIMARY KEY, IDENTITY	Surrogate identifier for service type	Generated
-ServiceTypeName	NVARCHAR(50)	NOT NULL, UNIQUE	Name of service type	Source from Service.ServiceType
-ServiceUsageCount	INT	NOT NULL, DEFAULT 0	Count of service bookings for this type	Derived metric from facts
-AvgTypeRating	DECIMAL(3,2)	NULL	Average rating across services of this type	Derived from Dim_Service.AvgRating
+| Column Name   | Data Type     | Constraints       | Description                         | Source/Derived    |
+|---------------|----------------|-------------------|-------------------------------------|-------------------|
+| DateKey       | INT            | PRIMARY KEY       | Date in YYYYMMDD format             | Derived           |
+| FullDate      | DATE           | NOT NULL, UNIQUE  | Actual calendar date                | Source            |
+| DayOfWeek     | INT            | NOT NULL          | Day number (1=Sunday, 7=Saturday)   | Derived           |
+| DayName       | NVARCHAR(10)   | NOT NULL          | Name of day                         | Derived           |
+| Month         | INT            | NOT NULL          | Month number (1-12)                 | Derived           |
+| MonthName     | NVARCHAR(10)   | NOT NULL          | Name of month                       | Derived           |
+| Quarter       | INT            | NOT NULL          | Calendar quarter (1-4)              | Derived           |
+| Year          | INT            | NOT NULL          | Calendar year                       | Derived           |
 
-Relationships in DW Schema
-Parent Table	Parent Column	Child Table	Child Column	Relationship Type
-Dim_Date	DateKey	Fact_ReservationService	DateKey	One-to-Many
-Dim_Customer	CustomerKey	Fact_ReservationService	CustomerKey	One-to-Many
-Dim_Service	ServiceKey	Fact_ReservationService	ServiceKey	One-to-Many
-Dim_ServiceType	ServiceTypeKey	Dim_Service	ServiceTypeKey	One-to-Many (Snowflake)
+**Dim_Customer**  
+_Stores enriched customer profiles for segmentation and demographic analysis._
+
+| Column Name   | Data Type      | Constraints         | Description                             | Source/Derived       |
+|---------------|----------------|----------------------|-----------------------------------------|----------------------|
+| CustomerKey   | INT            | PRIMARY KEY, IDENTITY| Surrogate identifier for customer        | Generated             |
+| CustomerID    | INT            | NOT NULL, UNIQUE     | Business key from source system         | Customer             |
+| CustomerName  | NVARCHAR(100)  | NOT NULL             | Full name of customer                   | CustFName + CustLName|
+| Gender        | NVARCHAR(20)   | NULL                 | Customer's gender                       | Customer             |
+| AgeGroup      | NVARCHAR(20)   | NOT NULL             | Age bucket for segmentation             | Derived from DOB     |
+| LoyaltyLevel  | NVARCHAR(20)   | NOT NULL             | Loyalty program membership tier         | LoyaltyProgram       |
+
+**Dim_Service**  
+_Defines each service and its attributes, including price, type, and satisfaction scores._
+
+| Column Name   | Data Type      | Constraints         | Description                             | Source/Derived     |
+|---------------|----------------|----------------------|-----------------------------------------|--------------------|
+| ServiceKey    | INT            | PRIMARY KEY, IDENTITY| Surrogate key for each service           | Generated          |
+| ServiceID     | INT            | NOT NULL, UNIQUE     | Business key from OLTP system            | Service            |
+| ServiceName   | NVARCHAR(100)  | NOT NULL             | Name of the service                      | Service            |
+| ServiceTypeKey| INT            | FOREIGN KEY          | Reference to Dim_ServiceType            | Join to ServiceType|
+| Duration      | INT            | NOT NULL             | Length of service in minutes            | Service            |
+| Price         | DECIMAL(10,2)  | NOT NULL             | Standard price of service               | Service            |
+| AvgRating     | DECIMAL(3,2)   | NULL                 | Aggregated feedback score               | Derived            |
+
+**Dim_ServiceType**  
+_Categorizes services and supports departmental performance analysis._
+
+| Column Name        | Data Type     | Constraints            | Description                                     | Source/Derived              |
+|--------------------|---------------|-------------------------|-------------------------------------------------|-----------------------------|
+| ServiceTypeKey     | INT           | PRIMARY KEY, IDENTITY   | Surrogate identifier for service type           | Generated                   |
+| ServiceTypeName    | NVARCHAR(50)  | NOT NULL, UNIQUE        | Name of the service category (e.g., Spa)        | Service.ServiceType         |
+| ServiceUsageCount  | INT           | NOT NULL, DEFAULT 0     | Number of services booked for this category     | Aggregated from Fact Table  |
+| AvgTypeRating      | DECIMAL(3,2)  | NULL                    | Average rating across all services in this type | Aggregated from Dim_Service |
+"""
+
+
