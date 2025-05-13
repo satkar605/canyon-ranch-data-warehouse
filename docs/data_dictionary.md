@@ -221,7 +221,7 @@ This document outlines the SQL Server schema design decisions for the Canyon Ran
 This document provides a comprehensive reference for all tables and columns in the Canyon Ranch data warehouse, including data types, descriptions, and relationships between tables.
 
 # Define the individual markdown tables for each data warehouse entity
-dw_tables_markdown = """
+
 **Fact_ReservationService**  
 _Stores each instance of a booked service, supporting revenue and performance tracking._
 
