@@ -124,11 +124,10 @@ canyon-ranch-db/
 ## How to Run
 
 1. Open the project.
-2. Run `create_tables.sql` in your SQL Server instance to create all tables.
-3. Load mock data using `insert_sample_data.sql`.
-4. Use `test_queries.sql` to validate table joins and foreign key integrity.
-5. Generate backup file `.bak` using SQL Server Management Studio.
-
+2. Run `scripts/create_canyon_ranch_db.sql` in your SQL Server instance to create all OLTP (operational database) tables. Use `scripts/db_populate.sql` to populate the OLTP database with sample data.
+3. Run `scripts/create_canyon_ranch_dw.sql` to create all Data Warehouse (DW) tables, and then run `scripts/dw_populate.sql` to populate the data warehouse.
+4. Alternatively, you can restore the database using the backup file `backup/canyon_ranch_backup.bak` in SQL Server Management Studio (SSMS).
+   
 ## Project Status
 
 See `workflow.md` for detailed task tracking and milestone progress.
