@@ -56,7 +56,7 @@ Derived metrics computed through ELT include:
 - Booking volume per service type
 - Department-level satisfaction scores
 
-![data_warehouse_schema](https://github.com/user-attachments/assets/806aca8c-1fbd-410b-a8ad-ace5ee0917b4)
+<img width="742" alt="Screenshot 2025-05-12 at 8 27 04 PM" src="https://github.com/user-attachments/assets/65ca3c2f-b4e1-49c8-a296-2ca3d84129d7" />
 
 ## Key Business Insights
 
