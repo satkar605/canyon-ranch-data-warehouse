@@ -38,13 +38,6 @@ The relational database was designed in Third Normal Form (3NF) to eliminate red
 - **Referrals and Affiliates**: Captures referral source types—affiliate, website, and word-of-mouth—and ties them to actual bookings.
 - **Feedback and Loyalty**: Integrates satisfaction ratings and reward tracking for personalized guest management.
 
-  ![er_diagram](https://github.com/user-attachments/assets/42e07810-82f0-41d8-b272-52e334653bce)
-  
-![relational_schema](https://github.com/user-attachments/assets/53530b6d-8d37-4011-9d51-29a0717094b6)
-
-  
-
-
 ### 2. Analytical Layer (Snowflake Data Warehouse)
 
 The data warehouse supports performance monitoring and department-level reporting. It was built using a snowflake schema, with normalized dimension tables to support hierarchical queries and reduce duplication.
@@ -60,9 +53,6 @@ Derived metrics computed through ELT include:
 - Average service rating (by service and by category)
 - Booking volume per service type
 - Department-level satisfaction scores
-
-![data_warehouse_schema](https://github.com/user-attachments/assets/a6e884e4-cf66-4e1e-9513-d96192d34e84)
-
 
 ## Key Business Insights
 
@@ -84,10 +74,22 @@ Spa services received the highest average ratings, while nutrition and coaching 
 
 The warehouse enables department heads to monitor performance metrics like booking volume, average revenue, and service satisfaction—broken down by service category, referral type, and guest demographic. The snowflake model supports real-time slicing of trends without modifying the schema, enabling self-service dashboards that inform scheduling, marketing, and quality decisions.
 
+## Assumptions and Caveats
+
+Throughout the database and warehouse design process, several assumptions were made to accommodate data limitations and ensure model functionality:
+
+    1. Synthetic Data Usage: All data in this project was synthetically generated to reflect plausible business logic and ensure referential integrity. It does not contain real customer information.
+
+    2. Privacy Considerations: Sensitive fields such as medical history and service preferences were modeled to simulate Canyon Ranch’s personalization goals. In a real implementation, strict access controls, role-based permissions, and regulatory compliance (e.g., HIPAA) would be essential.
+
+    3. Data Retention & Usage Ethics: The data models were designed with the assumption that customer consent and transparency policies are in place. Any use of guest data for insights or segmentation must prioritize fairness and avoid unintended bias.
+
+    4. Security & Governance: While this project did not deploy actual controls, it assumes that secure storage, encryption, and staff training would be implemented in a production setting.
+
 ## Tech Stack
 
 - **MS SQL Server** (database engine)
-- **Microsoft Copilot** (code editing)
+- **Cursor IDE** (code editing)
 - **ERDPlus** (diagramming tool)
 - **Markdown + Word** (documentation)
 - **GPT-4** (sample data generation)
@@ -95,31 +97,28 @@ The warehouse enables department heads to monitor performance metrics like booki
 ## Project Structure
 
 ```
-canyon-ranch-db/
-├── sql/                      # SQL scripts
-│   ├── create_schema.sql     # Database schema creation script
-│   ├── insert_sample_data.sql # Sample data population script
-│   └── test_queries.sql      # Validation queries
+canyon-ranch-data-warehouse/
+├── sql/ # SQL scripts for schema and data loading
+│ ├── create_canyon_ranch_db.sql # Creates normalized OLTP database schema
+│ ├── create_canyon_ranch_dw.sql # Creates dimensional data warehouse schema
+│ ├── db_populate.sql # Populates OLTP with synthetic data
+│ └── dw_populate.sql # Populates DW using ETL/ELT logic
 │
-├── docs/                     # Documentation
-│   ├── entity_description.md # Entity details and attributes
-│   ├── functional_dependencies.md # Functional dependencies documentation
-│   ├── sql_schema_design.md  # SQL schema design decisions
-│   ├── cloud_db_setup_notes.md # Cloud deployment guidelines
-│   ├── Milestone1Report.docx # First milestone report
-│   └── TeamProjectInstructions.docx # Project instructions
+├── diagrams/ # Visual models and schema diagrams
+│ ├── er_diagram.png # High-level ERD
+│ ├── relational_schema.png # OLTP relational schema diagram
+│ ├── data_warehouse_schema.png # Snowflake schema for data warehouse
+│ └── db_diagram_canyon_ranch.png # SSMS-generated full DB diagram
 │
-├── diagrams/                 # Visual representations
-│   ├── er_diagram.png        # Entity-Relationship diagram
-│   └── relational_schema.png # Relational schema diagram
+├── docs/ # Documentation and logs
+│ ├── data_dictionary.md # Detailed OLTP and DW data dictionary
+│ ├── iteration_log.md # Development and design log
+│ └── workflow.md # Development workflow and checkpoints
 │
-├── backup/                   # Database backups
-│   └── canyon_ranch_YYYYMMDD.bak # SQL Server backup file
+├── backup/ # Database backup file (SQL Server)
+│ └── canyon_ranch_backup.bak
 │
-├── workflow.md               # Project tracker with task status
-├── iteration_log.md          # Log of all project updates
-└── README.md                 # Project overview and instructions
-```
+└── README.md # Project overview and usage guide
 
 ## How to Run
 
@@ -127,7 +126,7 @@ canyon-ranch-db/
 2. Run `scripts/create_canyon_ranch_db.sql` in your SQL Server instance to create all OLTP (operational database) tables. Use `scripts/db_populate.sql` to populate the OLTP database with sample data.
 3. Run `scripts/create_canyon_ranch_dw.sql` to create all Data Warehouse (DW) tables, and then run `scripts/dw_populate.sql` to populate the data warehouse.
 4. Alternatively, you can restore the database using the backup file `backup/canyon_ranch_backup.bak` in SQL Server Management Studio (SSMS).
-   
+
 ## Project Status
 
 See `workflow.md` for detailed task tracking and milestone progress.
