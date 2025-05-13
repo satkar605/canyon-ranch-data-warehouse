@@ -141,4 +141,3 @@ This log tracks all major updates and file changes made throughout the project a
 
 ---
 
-📌 *Keep this file updated as you progress through Milestone 2 and Milestone 3.*
