@@ -59,31 +59,40 @@ This document outlines all tasks from Milestone 1 to Milestone 3, broken into sm
 - [x] Document dimensional model in `dimensional_modeling.md`
 
 ### 🔹 DW Implementation
-- [ ] Create CanyonDW database
-- [ ] Create dimension tables:
-  - [ ] Dim_Date (simplified, removed IsWeekend, IsHoliday, Season)
-  - [ ] Dim_Customer
-  - [ ] Dim_Service
-- [ ] Create fact table:
-  - [ ] Fact_ReservationService
-- [ ] Add appropriate keys and constraints
+- [x] Create CanyonDW database
+- [x] Create dimension tables:
+  - [x] Dim_Date (simplified, removed IsWeekend, IsHoliday, Season)
+  - [x] Dim_Customer
+  - [x] Dim_Service
+  - [x] Dim_ServiceType (snowflake schema)
+- [x] Create fact table:
+  - [x] Fact_ReservationService
+- [x] Add appropriate keys and constraints
 
 ### 🔹 ETL Process
-- [ ] Develop SQL scripts to populate dimension tables
-- [ ] Develop SQL script to populate fact table
-- [ ] Test data integrity between OLTP and DW
+- [x] Develop SQL scripts to populate dimension tables
+- [x] Develop SQL script to populate fact table
+- [x] Test data integrity between OLTP and DW
 
 ### 🔹 Analytical Queries
-- [ ] Implement sample analytical queries
-- [ ] Document query results and insights
+- [x] Implement sample analytical queries
+- [x] Document query results and insights
 
 ### 🔹 Privacy & Ethics
-- [ ] Write a section discussing privacy and ethical issues
+- [x] Write a section discussing privacy and ethical issues
 
 ### 🔹 Final Report
-- [ ] Compile final project report with all diagrams and SQL files
-- [ ] Submit `.docx`, `.bak`, ER diagrams, and all SQL scripts
+- [x] Compile final project report with all diagrams and SQL files
+- [x] Submit `.docx`, `.bak`, ER diagrams, and all SQL scripts
 
 ---
 
-📌 *Last updated: April 24, 2025 — Simplified Dim_Date table by removing IsWeekend, IsHoliday, and Season attributes.*
+## 🚀 Project Completion
+
+- [x] Final review and validation of all scripts and documentation
+- [x] Repository posted live on GitHub for public access
+- [x] All deliverables submitted
+
+---
+
+📌 *Last updated: May 2, 2025 — Project completed and published on GitHub.*
