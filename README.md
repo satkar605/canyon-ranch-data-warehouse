@@ -87,7 +87,7 @@ The warehouse enables department heads to monitor performance metrics like booki
 ## Tech Stack
 
 - **MS SQL Server** (database engine)
-- **Cursor IDE** (code editing)
+- **Microsoft Copilot** (code editing)
 - **ERDPlus** (diagramming tool)
 - **Markdown + Word** (documentation)
 - **GPT-4** (sample data generation)
@@ -123,7 +123,7 @@ canyon-ranch-db/
 
 ## How to Run
 
-1. Open the project in **Cursor IDE**.
+1. Open the project.
 2. Run `create_tables.sql` in your SQL Server instance to create all tables.
 3. Load mock data using `insert_sample_data.sql`.
 4. Use `test_queries.sql` to validate table joins and foreign key integrity.
